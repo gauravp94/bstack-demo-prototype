@@ -1,0 +1,213 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
+}
+
+@layer components {
+  /* Traffic light badges */
+  .badge-red {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-300;
+  }
+
+  .badge-yellow {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-300;
+  }
+
+  .badge-green {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-300;
+  }
+
+  /* Split view styles */
+  .split-pane {
+    @apply h-full overflow-y-auto;
+  }
+
+  .markdown-content {
+    @apply prose prose-sm max-w-none;
+  }
+
+  .markdown-content h1 {
+    @apply text-3xl font-bold mt-6 mb-4;
+  }
+
+  .markdown-content h2 {
+    @apply text-2xl font-semibold mt-5 mb-3;
+  }
+
+  .markdown-content h3 {
+    @apply text-xl font-semibold mt-4 mb-2;
+  }
+
+  .markdown-content p {
+    @apply mb-4 leading-relaxed;
+  }
+
+  .markdown-content ul {
+    @apply list-disc pl-6 mb-4;
+  }
+
+  .markdown-content ol {
+    @apply list-decimal pl-6 mb-4;
+  }
+
+  .markdown-content li {
+    @apply mb-2;
+  }
+
+  .markdown-content code {
+    @apply bg-gray-100 px-1 py-0.5 rounded text-sm font-mono;
+  }
+
+  .markdown-content pre {
+    @apply bg-gray-100 p-4 rounded-lg overflow-x-auto mb-4;
+  }
+
+  .markdown-content blockquote {
+    @apply border-l-4 border-gray-300 pl-4 italic my-4;
+  }
+
+  /* Highlighted text (for comments) */
+  .text-highlighted {
+    @apply bg-yellow-200 border-b-2 border-yellow-500 cursor-pointer;
+  }
+
+  .text-highlighted-red {
+    @apply bg-red-100 border-b-2 border-red-500;
+  }
+
+  .text-highlighted-yellow {
+    @apply bg-yellow-100 border-b-2 border-yellow-500;
+  }
+
+  .text-highlighted-green {
+    @apply bg-green-100 border-b-2 border-green-500;
+  }
+
+  /* Pre-highlighted comment phrases (dynamically added to DOM) */
+  .comment-highlight {
+    background-color: rgb(254 240 138); /* yellow-200 */
+    border-bottom: 2px solid rgb(202 138 4); /* yellow-600 */
+    padding-left: 0.125rem;
+    padding-right: 0.125rem;
+    border-radius: 0.125rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .comment-highlight:hover {
+    background-color: rgb(253 224 71); /* yellow-300 */
+  }
+
+  .comment-highlight-red {
+    background-color: rgb(254 202 202); /* red-200 */
+    border-bottom-color: rgb(220 38 38); /* red-600 */
+  }
+
+  .comment-highlight-red:hover {
+    background-color: rgb(252 165 165); /* red-300 */
+  }
+
+  .comment-highlight-yellow {
+    background-color: rgb(254 240 138); /* yellow-200 */
+    border-bottom-color: rgb(202 138 4); /* yellow-600 */
+  }
+
+  .comment-highlight-yellow:hover {
+    background-color: rgb(253 224 71); /* yellow-300 */
+  }
+
+  .comment-highlight-green {
+    background-color: rgb(187 247 208); /* green-200 */
+    border-bottom-color: rgb(22 163 74); /* green-600 */
+  }
+
+  .comment-highlight-green:hover {
+    background-color: rgb(134 239 172); /* green-300 */
+  }
+
+  /* Button styles */
+  .btn-primary {
+    @apply px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-medium;
+  }
+
+  .btn-danger {
+    @apply px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium;
+  }
+
+  .btn-success {
+    @apply px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium;
+  }
+
+  /* Comment card */
+  .comment-card {
+    @apply bg-white border border-gray-200 rounded-lg p-4 mb-3 hover:shadow-md transition-shadow;
+  }
+
+  /* Diff styles */
+  .diff-line-added {
+    @apply bg-green-50 border-l-4 border-green-500 pl-2;
+  }
+
+  .diff-line-removed {
+    @apply bg-red-50 border-l-4 border-red-500 pl-2;
+  }
+
+  .diff-line-unchanged {
+    @apply bg-white pl-2;
+  }
+
+  /* Flash highlight animation */
+  .flash-highlight {
+    animation: flashHighlight 2s ease-in-out;
+  }
+
+  @keyframes flashHighlight {
+    0%, 100% {
+      background-color: transparent;
+    }
+    50% {
+      background-color: rgba(59, 130, 246, 0.2);
+    }
+  }
+
+  /* Persistent text selection highlight */
+  .text-selection-active {
+    background-color: rgba(251, 191, 36, 0.3);
+    border-bottom: 2px solid rgba(251, 191, 36, 0.8);
+    padding: 0 2px;
+    border-radius: 2px;
+  }
+
+  /* Active comment during sync */
+  .comment-active {
+    @apply bg-blue-50 border-blue-400 shadow-lg;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+}

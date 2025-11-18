@@ -1,0 +1,132 @@
+// This is your Prisma schema file
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  name      String
+  role      String    // 'dev', 'design', 'pm'
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  prds            PRD[]           @relation("CreatedPRDs")
+  comments        Comment[]
+  approvals       Approval[]
+  readingLogs     ReadingLog[]
+  aiInteractions  AIInteraction[]
+  prdVersions     PRDVersion[]
+
+  @@map("users")
+}
+
+model PRD {
+  id        Int       @id @default(autoincrement())
+  title     String
+  content   String
+  version   Int       @default(1)
+  status    String    @default("draft")
+  createdBy Int       @map("created_by")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  creator     User          @relation("CreatedPRDs", fields: [createdBy], references: [id])
+  versions    PRDVersion[]
+  comments    Comment[]
+  approvals   Approval[]
+  readingLogs ReadingLog[]
+
+  @@map("prds")
+}
+
+model PRDVersion {
+  id        Int      @id @default(autoincrement())
+  prdId     Int      @map("prd_id")
+  version   Int
+  content   String
+  changedBy Int      @map("changed_by")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  prd       PRD      @relation(fields: [prdId], references: [id], onDelete: Cascade)
+  changer   User     @relation(fields: [changedBy], references: [id])
+
+  @@unique([prdId, version])
+  @@index([prdId])
+  @@map("prd_versions")
+}
+
+model Comment {
+  id           Int       @id @default(autoincrement())
+  prdId        Int       @map("prd_id")
+  userId       Int       @map("user_id")
+  parentId     Int?      @map("parent_id")
+  lineNumber     Int?      @map("line_number")
+  sectionId      String?   @map("section_id")
+  selectedText   String?   @map("selected_text")
+  scrollPosition Int?      @map("scroll_position")
+  content        String
+  category     String    // 'red', 'yellow', 'green'
+  isResolved   Boolean   @default(false) @map("is_resolved")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  prd        PRD       @relation(fields: [prdId], references: [id], onDelete: Cascade)
+  user       User      @relation(fields: [userId], references: [id])
+  parent     Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies    Comment[] @relation("CommentReplies")
+
+  @@index([prdId])
+  @@index([userId])
+  @@index([prdId, category])
+  @@map("comments")
+}
+
+model Approval {
+  id         Int      @id @default(autoincrement())
+  prdId      Int      @map("prd_id")
+  userId     Int      @map("user_id")
+  approvedAt DateTime @default(now()) @map("approved_at")
+
+  prd        PRD      @relation(fields: [prdId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@unique([prdId, userId])
+  @@map("approvals")
+}
+
+model ReadingLog {
+  id          Int      @id @default(autoincrement())
+  prdId       Int      @map("prd_id")
+  userId      Int      @map("user_id")
+  versionRead Int      @map("version_read")
+  timeSpent   Int      @default(0) @map("time_spent")
+  lastReadAt  DateTime @default(now()) @map("last_read_at")
+  isReading   Boolean  @default(false) @map("is_reading")
+
+  prd         PRD      @relation(fields: [prdId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@unique([prdId, userId])
+  @@index([prdId, userId])
+  @@map("reading_logs")
+}
+
+model AIInteraction {
+  id              Int      @id @default(autoincrement())
+  userId          Int      @map("user_id")
+  interactionType String   @map("interaction_type")
+  inputText       String?  @map("input_text")
+  outputText      String?  @map("output_text")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  user            User     @relation(fields: [userId], references: [id])
+
+  @@map("ai_interactions")
+}
